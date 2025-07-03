@@ -32,8 +32,8 @@
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 1;
-        }
+            z-index: 1       ;
+ }
         
         .container {
             position: relative;
@@ -323,8 +323,8 @@
             
             <div id="videoSection" class="video-container">
                 <!-- 这里替换为本地视频文件 -->
-                <video id="localVideo" poster="./屏幕截图 2025-07-04 003542.png">
-                    <source src="./video_20250703_115250_edit.mp4" type="video/mp4">
+                <video id="localVideo">
+                    <source src="" type="video/mp4">
                     您的浏览器不支持视频标签。
                 </video>
             </div>
@@ -474,8 +474,17 @@
                         systemStatus.textContent = "部署完成";
                         terminal.textContent += "\n> 资本做局成功！所有系统运作正常";
                         
-                        // 自动播放本地视频
-                        localVideo.play();
+                        // 加载视频
+                        localVideo.src = "./video_20250703_115250_edit.mp4"; // 替换为本地视频文件路径
+                        localVideo.load(); // 触发视频加载
+                        
+                        // 检查视频是否加载完成
+                        localVideo.addEventListener('canplaythrough', () => {
+                            // 视频加载完成后自动播放
+                            localVideo.play().catch(e => {
+                                console.log("自动播放被阻止:", e);
+                            });
+                        });
                     }, 500);
                 }
             }, 100); // 10秒完成 (100 * 100ms)
