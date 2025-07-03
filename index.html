@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资本做局器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0e1d 0%, #1a1f38 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 粒子背景效果 */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            padding: 20px;
+            background: rgba(10, 15, 35, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffd700, #ffb700, #ff9500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        
+        .main-box {
+            width: 90%;
+            height: 500px;
+            background: rgba(15, 20, 40, 0.85);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .main-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, #ffb700, #ff9500, #ffd700);
+            z-index: -1;
+            border-radius: 22px;
+            animation: borderAnimation 3s linear infinite;
+            background-size: 400%;
+        }
+        
+        .main-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            border-radius: 18px;
+            z-index: -1;
+        }
+        
+        @keyframes borderAnimation {
+            0% { background-position: 0%; }
+            100% { background-position: 400%; }
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #ffb700, #ff9500);
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 20px 60px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 183, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 3;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 183, 0, 0.6);
+        }
+        
+        .start-btn:active {
+            transform: translateY(0);
+        }
+        
+        .start-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .start-btn:hover::after {
+            transform: translateX(100%);
+        }
+        
+        .progress-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background: rgba(20, 25, 45, 0.7);
+            border-radius: 15px;
+        }
+        
+        .progress-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #ffd700;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(50, 50, 70, 0.7);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff9500, #ffd700);
+            border-radius: 12px;
+            transition: width 0.1s linear;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shine 2s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            margin-top: 15px;
+            font-size: 1.4rem;
+            color: #aaa;
+        }
+        
+        .video-container {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .completed-text {
+            margin-top: 20px;
+            font-size: 2rem;
+            color: #ffd700;
+            text-align: center;
+            display: none;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 15px;
+            width: 100%;
+        }
+        
+        .status-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .terminal {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            color: #0f0;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .main-box {
+                height: 400px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .video-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <header>
+            <h1>资本做局器</h1>
+            <p class="subtitle">金融资本战略部署系统 - 版本 1.0.3</p>
+        </header>
+        
+        <div class="main-box">
+            <div class="terminal">系统就绪 > 等待用户指令...</div>
+            
+            <div id="startSection">
+                <button id="startButton" class="start-btn">
+                    <i class="fas fa-play-circle"></i> 开始做局
+                </button>
+            </div>
+            
+            <div id="progressSection" class="progress-container">
+                <h2 class="progress-title">正在做局</h2>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="progressText" class="progress-text">初始化系统... 0%</div>
+            </div>
+            
+            <div id="videoSection" class="video-container">
+                <!-- 这里替换为本地视频文件 -->
+                <video id="localVideo" poster="D:\localsend互传\file\屏幕截图 2025-07-04 003542.png">
+                    <source src="D:\localsend互传\file\video_20250703_115250_edit.mp4" type="video/mp4">
+                    您的浏览器不支持视频标签。
+                </video>
+            </div>
+            
+            <div id="completedText" class="completed-text">
+                <i class="fas fa-check-circle"></i> 做局完成！资本已部署
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div>状态: <span id="systemStatus">就绪</span></div>
+            <div>当前时间: <span id="currentTime">00:00:00</span></div>
+            <div>系统负载: <span id="systemLoad">0.2%</span></div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 资本做局系统 | 高级金融部署平台 | 仅限授权用户使用</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 粒子背景配置
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffd700" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffb700",
+                    opacity: 0.3,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out"
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" }
+                }
+            }
+        });
+        
+        // 获取DOM元素
+        const startButton = document.getElementById('startButton');
+        const startSection = document.getElementById('startSection');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const videoSection = document.getElementById('videoSection');
+        const completedText = document.getElementById('completedText');
+        const systemStatus = document.getElementById('systemStatus');
+        const systemLoad = document.getElementById('systemLoad');
+        const currentTime = document.getElementById('currentTime');
+        const terminal = document.querySelector('.terminal');
+        const localVideo = document.getElementById('localVideo');
+        
+        // 更新当前时间
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            currentTime.textContent = timeStr;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // 模拟系统负载变化
+        function simulateSystemLoad() {
+            const load = (Math.random() * 5).toFixed(1);
+            systemLoad.textContent = `${load}%`;
+        }
+        
+        setInterval(simulateSystemLoad, 3000);
+        
+        // 开始按钮点击事件
+        startButton.addEventListener('click', () => {
+            // 更新状态
+            systemStatus.textContent = "执行中";
+            terminal.style.display = "block";
+            
+            // 隐藏开始按钮，显示进度条
+            startSection.style.display = "none";
+            progressSection.style.display = "flex";
+            
+            // 模拟终端输出
+            const terminalMessages = [
+                "> 启动资本部署协议...",
+                "> 连接金融市场数据流...",
+                "> 分析目标资产波动模式...",
+                "> 计算最优资本注入点...",
+                "> 部署做局策略参数...",
+                "> 建立市场影响力矩阵..."
+            ];
+            
+            let messageIndex = 0;
+            const terminalInterval = setInterval(() => {
+                if (messageIndex < terminalMessages.length) {
+                    terminal.textContent += `\n${terminalMessages[messageIndex]}`;
+                    messageIndex++;
+                    terminal.scrollTop = terminal.scrollHeight;
+                } else {
+                    clearInterval(terminalInterval);
+                }
+            }, 1500);
+            
+            // 开始进度条动画
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressFill.style.width = `${progress}%`;
+                
+                // 更新进度文本
+                if (progress < 20) {
+                    progressText.textContent = `初始化系统... ${progress}%`;
+                } else if (progress < 50) {
+                    progressText.textContent = `分析市场数据... ${progress}%`;
+                } else if (progress < 70) {
+                    progressText.textContent = `构建资本策略... ${progress}%`;
+                } else if (progress < 90) {
+                    progressText.textContent = `执行部署方案... ${progress}%`;
+                } else {
+                    progressText.textContent = `最终优化... ${progress}%`;
+                }
+                
+                // 进度完成
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // 添加完成效果
+                    setTimeout(() => {
+                        progressSection.style.display = "none";
+                        videoSection.style.display = "block";
+                        completedText.style.display = "block";
+                        systemStatus.textContent = "部署完成";
+                        terminal.textContent += "\n> 资本做局成功！所有系统运作正常";
+                        
+                        // 自动播放本地视频
+                        localVideo.play();
+                    }, 500);
+                }
+            }, 100); // 10秒完成 (100 * 100ms)
+        });
+        
+        // 初始显示终端消息
+        setTimeout(() => {
+            terminal.style.display = "block";
+        }, 2000);
+    </script>
+</body>
+</html>
